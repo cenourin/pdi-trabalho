@@ -8,6 +8,8 @@
 \usepackage{array}
 \usepackage{float}
 \usepackage{seqsplit}
+\usepackage{subcaption}
+\usepackage{enumitem}
 
 \title{Trabalho Prático 2 --- Reconhecimento de Produtos\\por Correspondência de Características Locais}
 \author{Bruno Ribeiro \and Monique Machado}
@@ -16,10 +18,76 @@
 \begin{document}
 \maketitle
 
-\section*{1. Templates utilizados}
+\section{Introdução}
+
+Este relatório documenta a segunda etapa do projeto de Processamento Digital de Imagens (PDI)
+aplicado a embalagens de produtos avícolas. Na primeira etapa (T1), cada imagem de embalagem foi
+processada por um pipeline de segmentação clássico para localizar e recortar a região do rótulo
+contendo o nome do produto. Esta segunda etapa (T2) parte desses recortes e resolve o problema de
+\textbf{reconhecimento}: dado um segmento de imagem, determinar a qual classe de produto ele
+pertence, sem uso de aprendizado de máquina ou classificadores treinados --- apenas descritores
+locais de características e correspondência geométrica.
+
+\section{Objetivos}
+
+\begin{itemize}[nosep]
+  \item Construir um conjunto de templates de referência (\emph{gold}), um por classe, recortados
+        manualmente da região mais discriminativa do rótulo.
+  \item Implementar um pipeline de reconhecimento baseado em descritores locais (SIFT) e
+        casamento por FLANN, com verificação geométrica (RANSAC) para eliminar correspondências
+        espúrias.
+  \item Calibrar o único parâmetro de decisão exigido pelo enunciado ---
+        \texttt{min\_match\_frac}, a fração mínima de correspondências válidas para aceitar uma
+        classificação --- priorizando minimizar falsos positivos, mesmo à custa de recall.
+  \item Avaliar o pipeline sobre o conjunto completo de segmentos do T1 (com correção manual dos
+        segmentos que o T1 não conseguiu gerar) e reportar acurácia, taxa de não identificado e
+        taxa de falso positivo por classe.
+\end{itemize}
+
+\section{Desenvolvimento}
+
+\subsection{Templates utilizados}
 
 Um template por classe, recortado manualmente da região do rótulo com o nome do produto,
-a partir de uma imagem do conjunto \texttt{Train\_and\_Validation} de cada classe.
+a partir de uma imagem do conjunto \texttt{Train\_and\_Validation} de cada classe. A Figura~1
+mostra os sete templates utilizados; a Tabela~1 detalha a justificativa de escolha de cada um.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.23\textwidth}
+  \includegraphics[width=\linewidth]{../t2/templates-gold/meio-da-assa-gold.jpg}
+  \caption{Meio das Asas}
+\end{subfigure}
+\begin{subfigure}{0.23\textwidth}
+  \includegraphics[width=\linewidth]{../t2/templates-gold/coxinha-das-asas-gold.jpg}
+  \caption{Coxinhas das Asas}
+\end{subfigure}
+\begin{subfigure}{0.23\textwidth}
+  \includegraphics[width=\linewidth]{../t2/templates-gold/file-de-peito-gold.jpg}
+  \caption{Filé de Peito}
+\end{subfigure}
+\begin{subfigure}{0.23\textwidth}
+  \includegraphics[width=\linewidth]{../t2/templates-gold/coracao-gold.jpg}
+  \caption{Coração}
+\end{subfigure}
+
+\medskip
+
+\begin{subfigure}{0.23\textwidth}
+  \includegraphics[width=\linewidth]{../t2/templates-gold/moela-gold.jpg}
+  \caption{Moela}
+\end{subfigure}
+\begin{subfigure}{0.30\textwidth}
+  \includegraphics[width=\linewidth]{../t2/templates-gold/file_de_coxas_e_sobrecoxas-gold.jpg}
+  \caption{Filé de Coxas e Sobrecoxas com Pele}
+\end{subfigure}
+\begin{subfigure}{0.23\textwidth}
+  \includegraphics[width=\linewidth]{../t2/templates-gold/coxas_e_sobrecoxas-gold.jpg}
+  \caption{Coxas e Sobrecoxas}
+\end{subfigure}
+\caption{Templates gold, um por classe (embalagens tipo bandeja), usados como referência para o
+casamento de descritores locais.}
+\end{figure}
 
 \begin{table}[H]
 \centering
@@ -40,7 +108,7 @@ Coxas e Sobrecoxas                   & \scriptsize\ttfamily\seqsplit{coxas\_e\_s
 \caption{Templates utilizados, um por classe (embalagens tipo bandeja).}
 \end{table}
 
-\section*{2. Parâmetros do algoritmo}
+\subsection{Pipeline de reconhecimento}
 
 \textbf{Descritor local:} SIFT (\texttt{cv2.SIFT\_create}), com opção de troca para ORB via configuração.
 
@@ -73,7 +141,7 @@ O template com maior fração vence a classificação do segmento, desde que ess
 limiar; caso contrário, o segmento é reportado como \emph{não identificado} em vez de arriscar uma
 classe errada.
 
-\subsection*{Histórico de calibração (varredura de \texttt{min\_match\_frac})}
+\subsubsection{Histórico de calibração (varredura de \texttt{min\_match\_frac})}
 
 \begin{table}[H]
 \centering
@@ -98,7 +166,7 @@ escolhido por manter a taxa de falsos positivos baixa (2,9\%) sem descartar reca
 priorizando minimizar falso positivo conforme pedido no enunciado.}
 \end{table}
 
-\section*{3. Resultados}
+\section{Resultados}
 
 Avaliação sobre as 350 imagens de \texttt{crops-t1/} (7 classes bandeja, 50 imagens cada,
 segmentos obtidos no T1 e corrigidos manualmente quando necessário), com
@@ -135,5 +203,15 @@ errado); a última coluna, \emph{unknown}, conta os segmentos não identificados
 limiar de calibração). A escala de cor (barra à direita) indica o número de segmentos em cada
 célula, de 0 (branco) a 50 (azul escuro).}
 \end{figure}
+
+\section{Conclusão}
+
+O pipeline atingiu 83,4\% de acurácia com apenas 2,9\% de falsos positivos sobre as 350 imagens
+avaliadas, cumprindo o objetivo de priorizar a confiabilidade da classificação sobre a
+cobertura. Classes com texto curto e exclusivo (Coração, Filé de Peito) foram reconhecidas com
+100\% de acerto; classes com rótulos de menor contraste ou com mais elementos visuais repetidos
+entre embalagens (Filé de Coxas e Sobrecoxas com Pele, Coxinhas das Asas) concentraram a maior
+parte dos segmentos não identificados, indicando que a principal limitação do método está na
+qualidade do template/segmento de entrada, não no algoritmo de casamento em si.
 
 \end{document}
