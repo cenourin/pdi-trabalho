@@ -60,9 +60,9 @@ completo, com todas as classes, em [`docs/relatorio-t1.pdf`](docs/relatorio-t1.p
 
 <p align="center">
   <img src="docs/resultados-exemplo/bandeja/93000005_Meio_das_Asas_Congelado_2_crops.png" width="45%" alt="Recorte do rótulo Meio das Asas Congelado, embalagem tipo bandeja">
-  <img src="docs/resultados-exemplo/selado/93000003_Asas_Resfriado_Selado_2_recortes.png" width="45%" alt="Recorte do rótulo Asas Resfriado Selado, embalagem selada">
+  <img src="docs/resultados-exemplo/selado/93000019_Meio_das_Asas_Congela_2_recortes.png" width="45%" alt="Recorte do rótulo Meio das Asas Congelado Selado, embalagem selada">
 </p>
-<p align="center"><em>Esquerda: Meio das Asas Congelado (bandeja). Direita: Asas Resfriado Selado (selado).</em></p>
+<p align="center"><em>Esquerda: Meio das Asas Congelado (bandeja). Direita: Meio das Asas Congelado Selado (selado).</em></p>
 
 ### T2 — Reconhecimento
 
