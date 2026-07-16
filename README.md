@@ -46,6 +46,45 @@ repositório de terceiro usado como referência, pacote de entrega) **não são 
 `.gitignore`. Apenas uma amostra representativa (1 resultado por classe no T1, os templates gold
 no T2) fica no repositório.
 
+## Resultados preliminares
+
+Resumo visual dos resultados — os relatórios completos ficam em `docs/relatorio-t1.pdf` e
+`docs/relatorio-t2.pdf`, com introdução, objetivos, desenvolvimento e resultados detalhados por
+classe; esta seção existe pra dar o essencial sem precisar abrir os PDFs.
+
+### T1 — Segmentação
+
+Pipeline testado sobre as 18 classes do dataset, nos dois tipos de embalagem. Abaixo, um exemplo
+de cada tipo — os 18 recortes (um por classe) estão em `docs/resultados-exemplo/` e o relatório
+completo, com todas as classes, em [`docs/relatorio-t1.pdf`](docs/relatorio-t1.pdf).
+
+<p align="center">
+  <img src="docs/resultados-exemplo/bandeja/93000005_Meio_das_Asas_Congelado_2_crops.png" width="45%" alt="Recorte do rótulo Meio das Asas Congelado, embalagem tipo bandeja">
+  <img src="docs/resultados-exemplo/selado/93000003_Asas_Resfriado_Selado_2_recortes.png" width="45%" alt="Recorte do rótulo Asas Resfriado Selado, embalagem selada">
+</p>
+<p align="center"><em>Esquerda: Meio das Asas Congelado (bandeja). Direita: Asas Resfriado Selado (selado).</em></p>
+
+### T2 — Reconhecimento
+
+Avaliação sobre 350 imagens (7 classes bandeja × 50 imagens cada), com `min_match_frac = 0,08`:
+
+| Métrica | Valor |
+|---|---|
+| Acurácia | 83,4% (292/350) |
+| Não identificado (`unknown`) | 13,7% (48/350) |
+| Falsos positivos | 2,9% (10/350) |
+
+Classes com texto curto e exclusivo (Coração, Filé de Peito) tiveram 100% de acerto; classes com
+rótulo de menor contraste ou mais elementos repetidos entre embalagens (Filé de Coxas e
+Sobrecoxas com Pele, Coxinhas das Asas) concentraram a maior parte dos segmentos não
+identificados. Resultado completo por classe, templates utilizados e histórico de calibração em
+[`docs/relatorio-t2.pdf`](docs/relatorio-t2.pdf).
+
+<p align="center">
+  <img src="docs/matriz_confusao_t2.png" width="70%" alt="Matriz de confusão do reconhecimento T2">
+</p>
+<p align="center"><em>Matriz de confusão por classe (min_match_frac = 0,08).</em></p>
+
 ## Como rodar
 
 Dependências: `opencv-python`, `numpy`, `matplotlib` (instaladas via `%pip install` dentro dos
