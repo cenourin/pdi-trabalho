@@ -1,0 +1,34 @@
+# Ferramentas de assistente de código (não fazem parte do projeto)
+.claude/
+CLAUDE.md
+AGENTS.md
+
+# Dataset (grande demais para versionar e pertence à empresa/marca, não ao projeto)
+Train_and_Validation/
+t2/Train_and_Validation_Bandeja/
+
+# Saídas completas dos pipelines (regeneráveis rodando os notebooks; só amostras ficam em docs/resultados-exemplo/)
+resultado_bandeja/
+resultado_selado/
+
+# Material de apoio do T2 que não deve ser publicado
+t2/trabalho-de-terceiros/
+t2/crops-t1/
+t2/entregavel/
+
+# Empacotamento de submissão (regenerável)
+codigo.zip
+output.png
+
+# Artefatos de build LaTeX
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.out
+*.toc
+
+# Jupyter / Windows
+.ipynb_checkpoints/
+*:Zone.Identifier
